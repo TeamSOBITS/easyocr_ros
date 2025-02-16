@@ -1,31 +1,18 @@
 <?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>easyocr_ros</name>
   <version>0.0.0</version>
-  <description>The easyocr_ros package</description>
-  <license>BSD</license>
-  <url type="website">http://wiki.ros.org/easyocr_ros</url>
+  <description>TODO: Package description</description>
+  <maintainer email="ryo@todo.todo">ryo</maintainer>
+  <license>TODO: License declaration</license>
 
-  <maintainer email="shingogo.5511@gmail.com">Shingo Kitagawa</maintainer>
-  <author email="shingogo.5511@gmail.com">Shingo Kitagawa</author>
-
-  <buildtool_depend>catkin</buildtool_depend>
-  <buildtool_depend>python3-catkin-pkg-modules</buildtool_depend>
-  <build_depend>catkin_virtualenv</build_depend>
-  <!-- for melodic -->
-  <build_depend condition="$ROS_PYTHON_VERSION == 2">cv_bridge_python3</build_depend>
-  <!-- for noetic -->
-  <build_depend condition="$ROS_PYTHON_VERSION == 3">cv_bridge</build_depend>
-
-  <exec_depend>jsk_recognition_msgs</exec_depend>
-  <exec_depend>jsk_topic_tools</exec_depend>
-  <exec_depend>python3-rospkg-modules</exec_depend>
-  <exec_depend>python3-empy</exec_depend>
-  <exec_depend>python3-numpy</exec_depend>
-  <exec_depend>python3-setuptools</exec_depend>
-  <exec_depend>sensor_msgs</exec_depend>
-
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+  <exec_depend>rclpy</exec_depend>
   <export>
-    <pip_requirements>requirements.txt</pip_requirements>
+    <build_type>ament_python</build_type>
   </export>
 </package>

@@ -1,0 +1,26 @@
+decoder: greedy  # Type of decoder. Greedy is the simplest decoding method, selecting the most probable character at each step.
+beamWidth: 5     # Beam width for beam search decoder. Larger values keep more candidates but increase computational cost.
+batch_size: 1    # Batch size for processing images at once. Larger batch sizes improve processing speed but increase memory usage.
+workers: 0       # Number of threads used by the data loader. 0 means single-threaded.
+allowlist: ''    # Subset of characters to recognize. Useful for specific tasks (e.g., license plate recognition).
+blocklist: ''    # Subset of characters to ignore. Ignored if allowlist is specified.
+detail: 1        # Level of output detail. 1 means detailed output, 0 means simplified output.
+rotation_info: ''  # Rotation information to rotate each text box for the most reliable result. Example: [90, 180, 270].
+paragraph: ''    # Whether to combine results into paragraphs. Set to True for readable paragraphs.
+min_size: 20     # Minimum text box size in pixels. Text boxes smaller than this value are filtered out.
+contrast_ths: 0.1  # Text boxes with contrast lower than this value are adjusted and re-input to the model.
+adjust_contrast: 0.5  # Target contrast level for adjusting low-contrast text boxes.
+filter_ths: 0.003  # Filtering threshold for text boxes. Text boxes with confidence lower than this value are filtered out.
+text_threshold: 0.7  # Confidence threshold for text. Only text with confidence higher than this value is recognized.
+low_text: 0.4    # Lower boundary score for text. Text with scores lower than this value is ignored.
+link_threshold: 0.4  # Confidence threshold for links. Only links with confidence higher than this value are recognized.
+canvas_size: 2560  # Maximum image size. Images larger than this size are resized.
+mag_ratio: 1.0   # Magnification ratio for images. 1.0 means no magnification.
+slope_ths: 0.1   # Slope threshold for text. Text with slopes greater than this value is ignored.
+ycenter_ths: 0.5  # Y-coordinate threshold for text center. Text outside this value is ignored.
+height_ths: 0.5  # Height threshold for text. Text outside this value is ignored.
+width_ths: 0.5   # Width threshold for text. Text outside this value is ignored.
+y_ths: 0.5       # Y-coordinate threshold for text. Text outside this value is ignored.
+x_ths: 1.0       # X-coordinate threshold for text. Text outside this value is ignored.
+add_margin: 0.1  # Margin to add to text boxes. This value is a proportion of the text box size.
+output_format: standard  # Output format. Standard means standard format.

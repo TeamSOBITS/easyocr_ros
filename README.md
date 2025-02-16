@@ -1,70 +1,74 @@
 # easyocr_ros
 
-[![GitHub version](https://badge.fury.io/gh/knorth55%2Feasyocr_ros.svg)](https://badge.fury.io/gh/knorth55%2Feasyocr_ros)
-[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/knorth55/easyocr_ros/CI/master)](https://github.com/knorth55/easyocr_ros/actions)
+## 概要
+`easyocr_ros`は、EasyOCRを使用してリアルタイムで画像からテキストを認識するROS2パッケージです。このパッケージは画像トピックを購読し、EasyOCRを使用して画像を処理し、認識されたテキストとバウンディングボックスを公開します。
 
-![sample](./.readme/sample.png)
+## 環境
+- Ubuntu 22.04
+- ROS2 Humble
+- OpenCV
+- NumPy
 
-## Environment
-
-- Ubuntu 20.04 + Noetic
-- Ubuntu 18.04 + Melodic
-- Ubuntu 16.04 + Kinetic
-
-## Notice
-
-We need `python3.5` and above to run this package.
-
-## Setup
-
-### Workspace build
-
-#### Workspace build (Noetic)
-
-```bash
-source /opt/ros/noetic/setup.bash
-mkdir -p ~/easyocr_ws/src
-cd ~/easyocr_ws/src
-git clone https://github.com/knorth55/easyocr_ros.git
-wstool init
-wstool merge easyocr_ros/fc.rosinstall
-wstool update
-rosdep install --from-paths . --ignore-src -y -r
-cd ~/easyocr_ws
-catkin build
+## セットアップ
+```
+cd ~/colcon_ws/src
+git clone -b humble-devel https://github.com/TeamSOBITS/easyocr_ros.git
+bash install.sh
+cd ~/colcon_ws
+colcon build
+source ~/colcon_ws/install/setup.bash
 ```
 
-#### Workspace build (Melodic)
-
-```bash
-sudo apt install python3-opencv
-source /opt/ros/melodic/setup.bash
-mkdir -p ~/easyocr_ws/src
-cd ~/easyocr_ws/src
-git clone https://github.com/knorth55/easyocr_ros.git
-wstool init
-wstool merge easyocr_ros/fc.rosinstall
-wstool update
-rosdep install --from-paths . --ignore-src -y -r
-cd ~/easyocr_ws
-catkin build
+## 使用方法
+```
+ros2 launch easyocr_ros easy_ocr.launch.py
 ```
 
-#### Workspace build (Kinetic)
+## launchファイルで設定するパラメータ
+| パラメータ名              | 説明                                                                 | デフォルト値          |
+|---------------------------|----------------------------------------------------------------------|-----------------------|
+| `topic_name`              | 画像データを購読するトピック名                                       | `/image_raw`          |
+| `gpu`                     | OCR処理にGPUを使用するかどうか                                       | `True`                |
+| `classifier_name`         | クラス分類器の名前                                                   | `easy_ocr`            |
+| `languages`               | EasyOCRで使用する言語                                                | `['en']`              |
+| `visualize_duration`      | 可視化の間隔（秒）                                                   | `0.0167`              |
+| `enable_visualization`    | OCR結果の可視化を有効にするかどうか                                  | `True`                |
+| `grayscale_mode`          | グレースケールモードで画像を処理するかどうか                          | `False`               |
+| `downscale_ratio`         | 画像を処理するための縮小比率（例：`2`は元のサイズの半分を意味します） | `2`                   |
 
-```bash
-pip3 install --user opencv-python
-source /opt/ros/kinetic/setup.bash
-mkdir -p ~/easyocr_ws/src
-cd ~/easyocr_ws/src
-git clone https://github.com/knorth55/easyocr_ros.git
-wstool init
-wstool merge easyocr_ros/fc.rosinstall
-wstool merge easyocr_ros/fc.rosinstall.kinetic
-wstool update
-rosdep install --from-paths . --ignore-src -y -r
-cd ~/easyocr_ws
-catkin init
-catkin config -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.5m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so
-catkin build
-```
+
+## yamlファイルで指定するパラメータ
+
+
+| パラメータ | 説明 | 影響 |
+|------------|------|------|
+| `decoder: greedy` | デコーダの種類。Greedyは最も単純なデコーディング方法で、各ステップで最も確率の高い文字を選択します。 | 簡単で高速ですが、最適な結果を得られない場合があります。 |
+| `beamWidth: 5` | ビームサーチデコーダのビーム幅。大きな値はより多くの候補を保持しますが、計算コストが増加します。 | 精度が向上する可能性がありますが、処理時間が長くなります。 |
+| `batch_size: 1` | 一度に処理する画像のバッチサイズ。大きなバッチサイズは処理速度を向上させますが、メモリ使用量が増加します。 | 処理速度が向上しますが、メモリ消費が増加します。 |
+| `workers: 0` | データローダーが使用するスレッド数。0はシングルスレッドを意味します。 | スレッド数を増やすとデータ読み込みが高速化されますが、CPUリソースを多く消費します。 |
+| `allowlist: ''` | 認識する文字のサブセット。特定のタスク（例：ナンバープレート認識）に便利です。 | 特定の文字のみを認識することで精度が向上します。 |
+| `blocklist: ''` | 無視する文字のサブセット。allowlistが指定されている場合は無視されます。 | 特定の文字を無視することで精度が向上します。 |
+| `detail: 1` | 出力の詳細レベル。1は詳細な出力、0は簡略化された出力を意味します。 | 詳細な情報を得ることができますが、出力が増加します。 |
+| `rotation_info: ''` | 各テキストボックスを最も信頼性の高い結果に回転させるための回転情報。例：[90, 180, 270]。 | 回転により認識精度が向上しますが、計算コストが増加します。 |
+| `paragraph: ''` | 結果を段落にまとめるかどうか。読みやすい段落にするためにTrueに設定します。 | 読みやすい出力が得られますが、処理が複雑になります。 |
+| `min_size: 20` | 最小テキストボックスサイズ（ピクセル単位）。この値より小さいテキストボックスはフィルタリングされます。 | 小さなテキストボックスを無視することで精度が向上します。 |
+| `contrast_ths: 0.1` | この値よりコントラストが低いテキストボックスは調整され、モデルに再入力されます。 | コントラストの低いテキストの認識精度が向上します。 |
+| `adjust_contrast: 0.5` | コントラストの低いテキストボックスを調整するための目標コントラストレベル。 | コントラストの低いテキストの認識精度が向上します。 |
+| `filter_ths: 0.003` | テキストボックスのフィルタリング閾値。この値より信頼度が低いテキストボックスはフィルタリングされます。 | 信頼度の低いテキストを無視することで精度が向上します。 |
+| `text_threshold: 0.7` | テキストの信頼度閾値。この値より信頼度が高いテキストのみが認識されます。 | 信頼度の高いテキストのみを認識することで精度が向上します。 |
+| `low_text: 0.4` | テキストの下限スコア。この値より低いスコアのテキストは無視されます。 | 信頼度の低いテキストを無視することで精度が向上します。 |
+| `link_threshold: 0.4` | リンクの信頼度閾値。この値より信頼度が高いリンクのみが認識されます。 | 信頼度の高いリンクのみを認識することで精度が向上します。 |
+| `canvas_size: 2560` | 最大画像サイズ。このサイズより大きい画像はリサイズされます。 | 大きな画像を処理する際のメモリ使用量を制御します。 |
+| `mag_ratio: 1.0` | 画像の拡大率。1.0は拡大なしを意味します。 | 画像の拡大により認識精度が向上する場合があります。 |
+| `slope_ths: 0.1` | テキストの傾斜閾値。この値より傾斜が大きいテキストは無視されます。 | 傾斜の大きいテキストを無視することで精度が向上します。 |
+| `ycenter_ths: 0.5` | テキストの中心のY座標閾値。この値を超えるテキストは無視されます。 | テキストの位置に基づいてフィルタリングすることで精度が向上します。 |
+| `height_ths: 0.5` | テキストの高さ閾値。この値を超えるテキストは無視されます。 | テキストの高さに基づいてフィルタリングすることで精度が向上します。 |
+| `width_ths: 0.5` | テキストの幅閾値。この値を超えるテキストは無視されます。 | テキストの幅に基づいてフィルタリングすることで精度が向上します。 |
+| `y_ths: 0.5` | テキストのY座標閾値。この値を超えるテキストは無視されます。 | テキストの位置に基づいてフィルタリングすることで精度が向上します。 |
+| `x_ths: 1.0` | テキストのX座標閾値。この値を超えるテキストは無視されます。 | テキストの位置に基づいてフィルタリングすることで精度が向上します。 |
+| `add_margin: 0.1` | テキストボックスに追加するマージン。この値はテキストボックスサイズの割合です。 | マージンを追加することで認識精度が向上する場合があります。 |
+| `output_format: standard` | 出力形式。Standardは標準形式を意味します。 | 出力形式を指定することで、結果のフォーマットが変わります。 |
+
+詳細は
+https://www.jaided.ai/easyocr/documentation/
+を参照してください
