@@ -30,11 +30,11 @@ ros2 launch easyocr_ros easy_ocr.launch.py
 | `topic_name`              | 画像データを購読するトピック名                                       | `/image_raw`          |
 | `gpu`                     | OCR処理にGPUを使用するかどうか                                       | `True`                |
 | `classifier_name`         | クラス分類器の名前                                                   | `easy_ocr`            |
-| `languages`               | EasyOCRで使用する言語                                                | `['en']`              |
+| `languages`               | EasyOCRで使用する言語(80以上の言語に対応)                                                | `['en']`              |
 | `visualize_duration`      | 可視化の間隔（秒）                                                   | `0.0167`              |
-| `enable_visualization`    | OCR結果の可視化を有効にするかどうか                                  | `True`                |
-| `grayscale_mode`          | グレースケールモードで画像を処理するかどうか                          | `False`               |
-| `downscale_ratio`         | 画像を処理するための縮小比率（例：`2`は元のサイズの半分を意味します） | `2`                   |
+| `enable_visualization`    | OCR結果の可視化を有効にするかどうか(有効にすると処理が重くなる可能性があります)                                  | `True`                |
+| `grayscale_mode`          | グレースケールモードで画像を処理するかどうか(性能が向上する可能性があります)                          | `False`               |
+| `downscale_ratio`         | 画像を処理するための縮小比率(整数)（例：`2`は元のサイズの2分の1の`2`を意味します） | `2`                   |
 
 
 ## yamlファイルで指定するパラメータ
