@@ -20,6 +20,7 @@ source ~/colcon_ws/install/setup.bash
 ```
 
 ## 使用方法
+launchファイルのカメラのトピック名を書き換えてから，下記のコマンドを実行して下さい．
 ```
 ros2 launch easyocr_ros easy_ocr.launch.py
 ```
