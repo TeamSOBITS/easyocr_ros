@@ -8,13 +8,14 @@ import easyocr
 import time
 import yaml
 import os
+from ament_index_python.packages import get_package_share_directory
+
 
 class Easy_Ocr(Node):
     def __init__(self):
         super().__init__('easy_ocr')
         # Load parameters from YAML file
-        script_dir = os.path.dirname(__file__)
-        config_file_path = os.path.join(script_dir, '../params/config.yaml')
+        config_file_path = os.path.join(get_package_share_directory('easyocr_ros'), 'params', 'config.yaml')
         self.ocr_params = self.load_params_from_yaml(config_file_path)
 
         # Declare parameters to be loaded from launch file
