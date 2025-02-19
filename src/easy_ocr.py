@@ -67,6 +67,8 @@ class Easy_Ocr(Node):
         try:
             # Convert image data to NumPy array
             self.image = np.frombuffer(self.image_data, dtype=np.uint8).reshape(self.height, self.width, -1)
+            self.image = self.image[:, :, [2, 1, 0]]  # RとBを入れ替える
+
 
             # Check if downscale_ratio is a valid integer
             downscale_ratio = self.params['downscale_ratio']
