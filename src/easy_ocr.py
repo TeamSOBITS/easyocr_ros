@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
-from sobits_interfaces.msg import BoundingBox, BoundingBoxes
+from vision_msgs.msg import Detection2DArray, Detection2D, ObjectHypothesisWithPose
 import cv2
 import numpy as np
 import easyocr
@@ -33,7 +33,9 @@ class Easy_Ocr(Node):
             'topic_name', 'gpu', 'classifier_name', 'languages', 'visualize_duration', 'enable_visualization', 'grayscale_mode', 'downscale_ratio']}
 
         self.subscription = self.create_subscription(Image, self.params['topic_name'], self.listener_callback, 10)
-        self.publisher = self.create_publisher(BoundingBoxes, 'easy_ocr_result', 10)
+
+        # self.publisher = self.create_publisher(BoundingBoxes, 'easy_ocr_result', 10)
+        self.publisher = self.create_publisher(Detection2DArray, 'easy_ocr_result', 10)
 
         self.logger = self.get_logger()
         # Initialize EasyOCR reader
@@ -88,29 +90,45 @@ class Easy_Ocr(Node):
             # Apply EasyOCR with specified parameters
             results = self.reader.readtext(self.processed_image, **self.ocr_params)
             
-            bounding_boxes_msg = BoundingBoxes()
+            detection_array_msg = Detection2DArray()
+            detection_array_msg.header.stamp = self.get_clock().now().to_msg()
+            detection_array_msg.header.frame_id = "camera_frame"  # 要検討
             for (bbox, text, prob) in results:
                 # Log detected text and confidence
                 self.logger.info(f"Detected text: {text} (confidence: {prob:.2f})")
-                
-                # Create bounding box message
-                bounding_box = BoundingBox()
-                bounding_box.class_name = text
-                bounding_box.probability = prob
-                bounding_box.xmin = int(bbox[0][0])
-                bounding_box.ymin = int(bbox[0][1])
-                bounding_box.xmax = int(bbox[2][0])
-                bounding_box.ymax = int(bbox[2][1])
-                
-                bounding_boxes_msg.bounding_boxes.append(bounding_box)
-                
+    
+                detection = Detection2D()
+                # BBox中心座標とサイズ（[x, y, width, height]）
+                x_min = float(bbox[0][0])
+                y_min = float(bbox[0][1])
+                x_max = float(bbox[2][0])
+                y_max = float(bbox[2][1])
+                width = x_max - x_min
+                height = y_max - y_min
+                center_x = x_min + width / 2
+                center_y = y_min + height / 2
+
+                detection.bbox.center.position.x = center_x
+                detection.bbox.center.position.y = center_y
+                detection.bbox.size_x = width
+                detection.bbox.size_y = height
+
+                hypothesis = ObjectHypothesisWithPose()
+                hypothesis.hypothesis.class_id = text
+                hypothesis.hypothesis.score = prob
+                # hypothesis.pose には姿勢を入れられるが2D検出なので無視
+
+                detection.results.append(hypothesis)
+                detection_array_msg.detections.append(detection)
+
                 # Draw bounding box
                 top_left = tuple(map(int, bbox[0]))
                 bottom_right = tuple(map(int, bbox[2]))
                 cv2.rectangle(self.processed_image, top_left, bottom_right, (0, 255, 0), 2)
+
                 # Draw text
                 cv2.putText(self.processed_image, f"{text} ({prob:.2f})", (top_left[0], top_left[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-            self.publisher.publish(bounding_boxes_msg)
+            self.publisher.publish(detection_array_msg)
 
             # Display image
             if self.params['enable_visualization']:
