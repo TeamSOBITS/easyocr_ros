@@ -2,6 +2,10 @@
 
 echo "╔══╣ Install: easyocr_ros (STARTING) ╠══╗"
 
+sudo apt update -y
+
+sudo apt install -y ros-${ROS_DISTRO}-vision-msgs
+
 cd ..
 git clone -b humble-devel https://github.com/TeamSOBITS/sobits_msgs.git
 
