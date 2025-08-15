@@ -7,7 +7,7 @@ sudo apt update -y
 sudo apt install -y ros-${ROS_DISTRO}-vision-msgs
 
 cd ..
-git clone -b humble-devel https://github.com/TeamSOBITS/sobits_msgs.git
+git clone -b humble-devel https://github.com/TeamSOBITS/sobits_interfaces.git
 
 sudo apt update
 pip install easyocr pyyaml
