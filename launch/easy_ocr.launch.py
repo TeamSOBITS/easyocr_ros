@@ -16,7 +16,7 @@ def generate_launch_description():
                 {'visualize_duration': 0.0167},  # Duration between visualizations (in seconds)
                 {'enable_visualization': True},  # Enable visualization of OCR results
                 {'grayscale_mode': False},       # Process images in grayscale mode if True
-                {'downscale_ratio': 1}           # Ratio to downscale the image for processing　(e.g., 2 means half the original size)
+                {'downscale_ratio': 1.0}           # Ratio to downscale the image for processing　(e.g., 2 means half the original size)
             ]
         )
     ])

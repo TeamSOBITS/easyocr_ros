@@ -125,7 +125,7 @@ The following parameters can be set in [easy_ocr.launch.py](launch/easy_ocr.laun
 | `visualize_duration`   | Visualization interval in seconds                                                  | `0.0167`      |
 | `enable_visualization` | Whether to enable OCR result visualization (may slow down processing)              | `True`        |
 | `grayscale_mode`       | Whether to convert images to grayscale before processing (may improve performance) | `False`       |
-| `downscale_ratio`      | Downscaling ratio (e.g., `2` means half-size images)                               | `2`           |
+| `downscale_ratio`      | Downscaling ratio (e.g., `0.5` means half-size images)                               | `0.5`           |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
